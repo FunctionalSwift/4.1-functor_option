@@ -1,21 +1,41 @@
 //: Playground - Functor Option
 
+import Foundation
+
 enum Option<A> {
     case none
     case some(A)
 }
 
-class TextField {
-    let text: Option<String> = .none
+let json = """
+{
+"name": "Alex",
+"accountType": "Premium",
+"email": "alex@functionalhub.com",
+"url": "www.functionalhub.com",
+}
+"""
+
+struct Account {
+    let name: String
+    let accountType: String
+    let email: String
+    let url: String
 }
 
-func send(_ username: String) {
-    //Logic to send username
+func parse(_ response: String) -> [String: AnyObject] {
+    let data = response.data(using: .utf8)!
+    
+    return try! JSONSerialization.jsonObject(with: data) as! [String: AnyObject]
 }
 
-func sendUserNameOrAlert(textField: TextField) {
-    switch textField.text {
-    case .none: print("ERROR: TextField empty")
-    case let .some(username): send(username)
+extension Account {
+    static func from(json: String) -> Account {
+        let dict = parse(json)
+        
+        return Account(name: dict["name"] as! String,
+                       accountType: dict["accountType"] as! String,
+                       email: dict["email"] as! String,
+                       url: dict["url"] as! String)
     }
 }
