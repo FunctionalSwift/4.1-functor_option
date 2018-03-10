@@ -30,12 +30,20 @@ func parse(_ response: String) -> [String: AnyObject] {
 }
 
 extension Account {
-    static func from(json: String) -> Account {
+    static func from(json: String) -> Option<Account> {
         let dict = parse(json)
         
-        return Account(name: dict["name"] as! String,
-                       accountType: dict["accountType"] as! String,
-                       email: dict["email"] as! String,
-                       url: dict["url"] as! String)
+        guard
+            let name = dict["name"] as? String,
+            let accountType = dict["accountType"] as? String,
+            let email = dict["email"] as? String,
+            let url = dict["url"] as? String else {
+                return Option.none
+        }
+        
+        return Option.some(Account(name: name,
+                                   accountType: accountType,
+                                   email: email,
+                                   url: url))
     }
 }
