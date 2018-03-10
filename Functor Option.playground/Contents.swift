@@ -5,6 +5,13 @@ import Foundation
 enum Option<A> {
     case none
     case some(A)
+    
+    func map<B>(_ f: (A) -> B) -> Option<B> {
+        switch self {
+        case .none: return .none
+        case let .some(a): return .some(f(a))
+        }
+    }
 }
 
 let json = """
@@ -47,3 +54,10 @@ extension Account {
                                    url: url))
     }
 }
+
+func doSomething(with account: Account) {
+    print(account)
+}
+
+Account.from(json: json).map(doSomething)
+
